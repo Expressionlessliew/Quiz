@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz Form</title>
+    <!-- Include the Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  </head>
+  <body>
+    <h1>Quiz Form</h1>
+    <form id="quiz-form">
+      <div class="question">
+        <label for="question1">Question 1: What is the capital of France?</label>
+        <input type="text" id="question1" name="question1">
+      </div>
+      <div class="question">
+        <label for="question2">Question 2: Which planet is known as the Red Planet?</label>
+        <input type="radio" id="question2_option1" name="question2" value="option1">
+        <label for="question2_option1">Option 1: Mars</label>
+        <input type="radio" id="question2_option2" name="question2" value="option2">
+        <label for="question2_option2">Option 2: Venus</label>
+      </div>
+      <!-- Add more questions here -->
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="best-score-container"></div>
+
+    <script src="firebase-config.js"></script>
+  </body>
+</html>
