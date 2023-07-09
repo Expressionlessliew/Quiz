@@ -11,72 +11,28 @@ const firebaseConfig = {
   measurementId: "G-VVRCLQCYXM",
 };
 
-// Initialize Firebase
+
 firebase.initializeApp(firebaseConfig);
+
+// Get a reference to the Firebase Realtime Database
 const database = firebase.database();
 
-// Save the user's score
-function saveScore(score) {
-  const userId = "user1"; // You can use a unique identifier for each user
-  const timestamp = firebase.database.ServerValue.TIMESTAMP;
+// Handle form submission
+const form = document.getElementById("quiz-form");
+form.addEventListener("submit", (e) => {
+  e.preventDefault(); // Prevent form submission
+  const formData = new FormData(form);
 
-  // Save the score and timestamp under the user's ID in the 'scores' node
-  database.ref("scores/" + userId).set({ score, timestamp });
-}
+  // Convert form data to an object
+  const quizData = Object.fromEntries(formData.entries());
 
-// Retrieve and display the best score
-function displayBestScore() {
-  const userId = "user1"; // Same unique identifier as used in saveScore()
-
-  // Retrieve the best score for the user from the 'scores' node, ordered by score in descending order
-  database
-    .ref("scores/" + userId)
-    .orderByChild("score")
-    .limitToLast(1)
-    .once("value")
-    .then((snapshot) => {
-      const bestScoreSnapshot = snapshot.val();
-
-      if (bestScoreSnapshot) {
-        const bestScore = Object.values(bestScoreSnapshot)[0].score;
-        const timestamp = Object.values(bestScoreSnapshot)[0].timestamp;
-
-        const bestScoreContainer = document.getElementById("best-score-container");
-        bestScoreContainer.textContent = "Best Score: " + bestScore + " (Timestamp: " + timestamp + ")";
-      } else {
-        const bestScoreContainer = document.getElementById("best-score-container");
-        bestScoreContainer.textContent = "No best score yet";
-      }
+  // Save the quiz data to Firebase Realtime Database
+  database.ref("quizzes").push(quizData)
+    .then(() => {
+      alert("Quiz data saved successfully!");
+      form.reset(); // Reset the form
+    })
+    .catch((error) => {
+      console.error("Error saving quiz data: ", error);
     });
-}
-
-// Submit button click event handler
-document.getElementById("quiz-form").addEventListener("submit", function (event) {
-  event.preventDefault();
-
-  // Calculate the user's score
-  const question1Answer = document.querySelector('input[name="question1"]:checked').value;
-  const question2Answer = document.querySelector('input[name="question2"]:checked').value;
-
-  let score = 0;
-
-  // Increment the score based on correct answers
-  if (question1Answer === "Paris") {
-    score += 1;
-  }
-
-  if (question2Answer === "option1") {
-    score += 1;
-  }
-
-  // Save the user's score
-  saveScore(score);
-
-  // Display the best score
-  displayBestScore();
-});
-
-// Display the best score on page load
-window.addEventListener("load", function () {
-  displayBestScore();
 });
